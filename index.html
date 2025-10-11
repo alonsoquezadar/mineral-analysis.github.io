@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Minería - Mi Página</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .chart-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+        
+        .button-group {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 5px;
+            background-color: #D32F2F;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #B71C1C;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Análisis de Producción de Cobre</h1>
+        
+        <!-- Sección: Gráfico de Chile -->
+        <div class="chart-section">
+            <h2>🇨🇱 Producción de Cobre en Chile</h2>
+            <iframe src="grafico_chile_cobre.html"></iframe>
+            <div class="button-group">
+                <a href="datos_chile_cobre.csv" download class="btn">
+                    💾 Descargar Datos Chile (CSV)
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sección: Comparación de Países -->
+        <div class="chart-section">
+            <h2>🌍 Comparación Internacional</h2>
+            <iframe src="grafico_comparacion_paises.html"></iframe>
+            <div class="button-group">
+                <a href="datos_todos_paises_cobre.csv" download class="btn">
+                    💾 Descargar Datos Todos los Países (CSV)
+                </a>
+            </div>
+        </div>
+        
+        <!-- Opcional: Link a la página completa -->
+        <div class="button-group">
+            <a href="pagina_completa_mineria.html" class="btn">
+                🚀 Ver Dashboard Completo
+            </a>
+        </div>
+    </div>
+</body>
+</html>
