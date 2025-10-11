@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Producción de Cobre</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+        
+        .chart-container h2 {
+            color: #333;
+            border-bottom: 3px solid #D32F2F;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .btn-download {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .btn-csv {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #D32F2F;
+        }
+        
+        .info-box h3 {
+            color: #D32F2F;
+            margin-bottom: 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .chart-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 Análisis de Producción de Cobre</h1>
+            <p>Datos interactivos de producción minera mundial (1970-2023)</p>
+            <p style="margin-top: 10px; color: #999; font-size: 0.9em;">
+                Fuente: British Geological Survey (BGS) - OGC API
+            </p>
+        </div>
+        
+        <!-- Gráfico 1: Chile -->
+        <div class="chart-container">
+            <h2>🇨🇱 Producción de Cobre en Chile</h2>
+            
+            <div class="info-box">
+                <h3>Acerca de este gráfico</h3>
+                <p>Chile es el mayor productor mundial de cobre, representando aproximadamente el 24-28% de la producción global. 
+                Este gráfico muestra la evolución histórica de la producción desde 1970.</p>
+            </div>
+            
+            <div id="chart-chile"></div>
+            
+            <div class="button-group">
+                <button class="btn btn-download" onclick="downloadImageChile()">
+                    📷 Descargar Gráfico (PNG)
+                </button>
+                <button class="btn btn-csv" onclick="downloadCSVChile()">
+                    💾 Descargar Datos (CSV)
+                </button>
+                <button class="btn" onclick="resetZoomChile()">
+                    🔄 Resetear Zoom
+                </button>
+            </div>
+        </div>
+        
+        <!-- Gráfico 2: Comparación -->
+        <div class="chart-container">
+            <h2>🌍 Comparación Internacional</h2>
+            
+            <div class="info-box">
+                <h3>Top 5 Productores Mundiales</h3>
+                <p>Comparación de los cinco principales países productores de cobre.</p>
+            </div>
+            
+            <div id="chart-comparison"></div>
+            
+            <div class="button-group">
+                <button class="btn btn-download" onclick="downloadImageComparison()">
+                    📷 Descargar Gráfico (PNG)
+                </button>
+                <button class="btn btn-csv" onclick="downloadCSVAll()">
+                    💾 Descargar Datos (CSV)
+                </button>
+                <button class="btn" onclick="resetZoomComparison()">
+                    🔄 Resetear Zoom
+                </button>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>Desarrollado con datos de BGS World Mineral Statistics</p>
+            <p style="margin-top: 10px;">🔗 <a href="https://ogcapi.bgs.ac.uk" style="color: white;">ogcapi.bgs.ac.uk</a></p>
+        </div>
+    </div>
+    
+    <script>
+        // Datos embebidos
+        const chileData = [{"year":1970,"quantity":1332800.0,"pais":"Chile"},{"year":1971,"quantity":1333400.0,"pais":"Chile"},{"year":1972,"quantity":1306800.0,"pais":"Chile"},{"year":1973,"quantity":1291900.0,"pais":"Chile"},{"year":1974,"quantity":1624000.0,"pais":"Chile"},{"year":1975,"quantity":1552700.0,"pais":"Chile"},{"year":1976,"quantity":1861500.0,"pais":"Chile"},{"year":1977,"quantity":1944600.0,"pais":"Chile"},{"year":1978,"quantity":1961600.0,"pais":"Chile"},{"year":1979,"quantity":2011600.0,"pais":"Chile"},{"year":1980,"quantity":2021000.0,"pais":"Chile"},{"year":1981,"quantity":2034900.0,"pais":"Chile"},{"year":1982,"quantity":2289000.0,"pais":"Chile"},{"year":1983,"quantity":2316400.0,"pais":"Chile"},{"year":1984,"quantity":2389000.0,"pais":"Chile"},{"year":1985,"quantity":2444900.0,"pais":"Chile"},{"year":1986,"quantity":2525000.0,"pais":"Chile"},{"year":1987,"quantity":2525000.0,"pais":"Chile"},{"year":1988,"quantity":2640400.0,"pais":"Chile"},{"year":1989,"quantity":2875900.0,"pais":"Chile"},{"year":1990,"quantity":2916900.0,"pais":"Chile"},{"year":1991,"quantity":3110400.0,"pais":"Chile"},{"year":1992,"quantity":3259200.0,"pais":"Chile"},{"year":1993,"quantity":3444500.0,"pais":"Chile"},{"year":1994,"quantity":3479300.0,"pais":"Chile"},{"year":1995,"quantity":3779600.0,"pais":"Chile"},{"year":1996,"quantity":4471400.0,"pais":"Chile"},{"year":1997,"quantity":4781600.0,"pais":"Chile"},{"year":1998,"quantity":5090000.0,"pais":"Chile"},{"year":1999,"quantity":5865100.0,"pais":"Chile"},{"year":2000,"quantity":6062400.0,"pais":"Chile"},{"year":2001,"quantity":6242200.0,"pais":"Chile"},{"year":2002,"quantity":6019300.0,"pais":"Chile"},{"year":2003,"quantity":6446600.0,"pais":"Chile"},{"year":2004,"quantity":6930100.0,"pais":"Chile"},{"year":2005,"quantity":6878600.0,"pais":"Chile"},{"year":2006,"quantity":6926200.0,"pais":"Chile"},{"year":2007,"quantity":7071300.0,"pais":"Chile"},{"year":2008,"quantity":6696800.0,"pais":"Chile"},{"year":2009,"quantity":6916700.0,"pais":"Chile"},{"year":2010,"quantity":6978700.0,"pais":"Chile"},{"year":2011,"quantity":6785100.0,"pais":"Chile"},{"year":2012,"quantity":6776300.0,"pais":"Chile"},{"year":2013,"quantity":7134300.0,"pais":"Chile"},{"year":2014,"quantity":7123500.0,"pais":"Chile"},{"year":2015,"quantity":7154100.0,"pais":"Chile"},{"year":2016,"quantity":5552600.0,"pais":"Chile"},{"year":2017,"quantity":5503500.0,"pais":"Chile"},{"year":2018,"quantity":5831600.0,"pais":"Chile"},{"year":2019,"quantity":5787400.0,"pais":"Chile"},{"year":2020,"quantity":5733100.0,"pais":"Chile"},{"year":2021,"quantity":5624900.0,"pais":"Chile"},{"year":2022,"quantity":5330500.0,"pais":"Chile"},{"year":2023,"quantity":5372694.0,"pais":"Chile"}];
+        const allCountriesData = [{"year":1970,"quantity":1332800.0,"pais":"Chile"},{"year":1970,"quantity":120000.0,"pais":"China"},{"year":1970,"quantity":3049035.0,"pais":"Estados Unidos"},{"year":1970,"quantity":397144.0,"pais":"Per\u00fa"},{"year":1971,"quantity":1333400.0,"pais":"Chile"},{"year":1971,"quantity":130000.0,"pais":"China"},{"year":1971,"quantity":2741668.0,"pais":"Estados Unidos"},{"year":1971,"quantity":373699.0,"pais":"Per\u00fa"},{"year":1972,"quantity":1306800.0,"pais":"Chile"},{"year":1972,"quantity":250000.0,"pais":"China"},{"year":1972,"quantity":3043817.0,"pais":"Estados Unidos"},{"year":1972,"quantity":396246.0,"pais":"Per\u00fa"},{"year":1973,"quantity":1291900.0,"pais":"Chile"},{"year":1973,"quantity":260000.0,"pais":"China"},{"year":1973,"quantity":3140586.0,"pais":"Estados Unidos"},{"year":1973,"quantity":376715.0,"pais":"Per\u00fa"},{"year":1974,"quantity":1624000.0,"pais":"Chile"},{"year":1974,"quantity":280000.0,"pais":"China"},{"year":1974,"quantity":2872889.0,"pais":"Estados Unidos"},{"year":1974,"quantity":392735.0,"pais":"Per\u00fa"},{"year":1975,"quantity":1552700.0,"pais":"Chile"},{"year":1975,"quantity":300000.0,"pais":"China"},{"year":1975,"quantity":2594997.0,"pais":"Estados Unidos"},{"year":1975,"quantity":323527.0,"pais":"Per\u00fa"},{"year":1976,"quantity":1861500.0,"pais":"Chile"},{"year":1976,"quantity":300000.0,"pais":"China"},{"year":1976,"quantity":2848750.0,"pais":"Estados Unidos"},{"year":1976,"quantity":408669.0,"pais":"Per\u00fa"},{"year":1977,"quantity":1944600.0,"pais":"Chile"},{"year":1977,"quantity":305000.0,"pais":"China"},{"year":1977,"quantity":2666345.0,"pais":"Estados Unidos"},{"year":1977,"quantity":659210.0,"pais":"Per\u00fa"},{"year":1978,"quantity":1961600.0,"pais":"Chile"},{"year":1978,"quantity":330000.0,"pais":"China"},{"year":1978,"quantity":2645965.0,"pais":"Estados Unidos"},{"year":1978,"quantity":685753.0,"pais":"Per\u00fa"},{"year":1979,"quantity":2011600.0,"pais":"Chile"},{"year":1979,"quantity":330000.0,"pais":"China"},{"year":1979,"quantity":2782193.0,"pais":"Estados Unidos"},{"year":1979,"quantity":762120.0,"pais":"Per\u00fa"},{"year":1980,"quantity":2021000.0,"pais":"Chile"},{"year":1980,"quantity":340000.0,"pais":"China"},{"year":1980,"quantity":2189513.0,"pais":"Estados Unidos"},{"year":1980,"quantity":715400.0,"pais":"Per\u00fa"},{"year":1981,"quantity":2034900.0,"pais":"Chile"},{"year":1981,"quantity":360000.0,"pais":"China"},{"year":1981,"quantity":2854916.0,"pais":"Estados Unidos"},{"year":1981,"quantity":629914.0,"pais":"Per\u00fa"},{"year":1982,"quantity":2289000.0,"pais":"Chile"},{"year":1982,"quantity":380000.0,"pais":"China"},{"year":1982,"quantity":2122670.0,"pais":"Estados Unidos"},{"year":1982,"quantity":679500.0,"pais":"Per\u00fa"},{"year":1983,"quantity":2316400.0,"pais":"Chile"},{"year":1983,"quantity":370000.0,"pais":"China"},{"year":1983,"quantity":1965837.0,"pais":"Estados Unidos"},{"year":1983,"quantity":618100.0,"pais":"Per\u00fa"},{"year":1984,"quantity":2389000.0,"pais":"Chile"},{"year":1984,"quantity":460000.0,"pais":"China"},{"year":1984,"quantity":2116737.0,"pais":"Estados Unidos"},{"year":1984,"quantity":695868.0,"pais":"Per\u00fa"},{"year":1985,"quantity":2444900.0,"pais":"Chile"},{"year":1985,"quantity":535000.0,"pais":"China"},{"year":1985,"quantity":2043281.0,"pais":"Estados Unidos"},{"year":1985,"quantity":739021.0,"pais":"Per\u00fa"},{"year":1986,"quantity":2525000.0,"pais":"Chile"},{"year":1986,"quantity":650000.0,"pais":"China"},{"year":1986,"quantity":2055364.0,"pais":"Estados Unidos"},{"year":1986,"quantity":699760.0,"pais":"Per\u00fa"},{"year":1987,"quantity":2525000.0,"pais":"Chile"},{"year":1987,"quantity":767000.0,"pais":"China"},{"year":1987,"quantity":2215737.0,"pais":"Estados Unidos"},{"year":1987,"quantity":718230.0,"pais":"Per\u00fa"},{"year":1988,"quantity":2640400.0,"pais":"Chile"},{"year":1988,"quantity":795000.0,"pais":"China"},{"year":1988,"quantity":2459889.0,"pais":"Estados Unidos"},{"year":1988,"quantity":555551.0,"pais":"Per\u00fa"},{"year":1989,"quantity":2875900.0,"pais":"Chile"},{"year":1989,"quantity":1101000.0,"pais":"China"},{"year":1989,"quantity":2618263.0,"pais":"Estados Unidos"},{"year":1989,"quantity":677548.0,"pais":"Per\u00fa"},{"year":1990,"quantity":2916900.0,"pais":"Chile"},{"year":1990,"quantity":915000.0,"pais":"China"},{"year":1990,"quantity":2746204.0,"pais":"Estados Unidos"},{"year":1990,"quantity":584803.0,"pais":"Per\u00fa"},{"year":1991,"quantity":3110400.0,"pais":"Chile"},{"year":1991,"quantity":689000.0,"pais":"China"},{"year":1991,"quantity":2754004.0,"pais":"Estados Unidos"},{"year":1991,"quantity":724196.0,"pais":"Per\u00fa"},{"year":1992,"quantity":3259200.0,"pais":"Chile"},{"year":1992,"quantity":752700.0,"pais":"China"},{"year":1992,"quantity":2945061.0,"pais":"Estados Unidos"},{"year":1992,"quantity":705745.0,"pais":"Per\u00fa"},{"year":1992,"quantity":1906400.0,"pais":"Rusia"},{"year":1993,"quantity":3444500.0,"pais":"Chile"},{"year":1993,"quantity":789395.0,"pais":"China"},{"year":1993,"quantity":3066582.0,"pais":"Estados Unidos"},{"year":1993,"quantity":698461.0,"pais":"Per\u00fa"},{"year":1993,"quantity":1689900.0,"pais":"Rusia"},{"year":1994,"quantity":3479300.0,"pais":"Chile"},{"year":1994,"quantity":878030.0,"pais":"China"},{"year":1994,"quantity":3161108.0,"pais":"Estados Unidos"},{"year":1994,"quantity":738811.0,"pais":"Per\u00fa"},{"year":1994,"quantity":1587600.0,"pais":"Rusia"},{"year":1995,"quantity":3779600.0,"pais":"Chile"},{"year":1995,"quantity":979900.0,"pais":"China"},{"year":1995,"quantity":3099100.0,"pais":"Estados Unidos"},{"year":1995,"quantity":754812.0,"pais":"Per\u00fa"},{"year":1995,"quantity":1600900.0,"pais":"Rusia"},{"year":1996,"quantity":4471400.0,"pais":"Chile"},{"year":1996,"quantity":1052000.0,"pais":"China"},{"year":1996,"quantity":3218300.0,"pais":"Estados Unidos"},{"year":1996,"quantity":809392.0,"pais":"Per\u00fa"},{"year":1996,"quantity":1671600.0,"pais":"Rusia"},{"year":1997,"quantity":4781600.0,"pais":"Chile"},{"year":1997,"quantity":1284500.0,"pais":"China"},{"year":1997,"quantity":3379600.0,"pais":"Estados Unidos"},{"year":1997,"quantity":853945.0,"pais":"Per\u00fa"},{"year":1997,"quantity":1679900.0,"pais":"Rusia"},{"year":1998,"quantity":5090000.0,"pais":"Chile"},{"year":1998,"quantity":1325400.0,"pais":"China"},{"year":1998,"quantity":3349400.0,"pais":"Estados Unidos"},{"year":1998,"quantity":838016.0,"pais":"Per\u00fa"},{"year":1998,"quantity":1715900.0,"pais":"Rusia"},{"year":1999,"quantity":5865100.0,"pais":"Chile"},{"year":1999,"quantity":1357100.0,"pais":"China"},{"year":1999,"quantity":2713800.0,"pais":"Estados Unidos"},{"year":1999,"quantity":886764.0,"pais":"Per\u00fa"},{"year":1999,"quantity":1850000.0,"pais":"Rusia"},{"year":2000,"quantity":6062400.0,"pais":"Chile"},{"year":2000,"quantity":1606500.0,"pais":"China"},{"year":2000,"quantity":2305800.0,"pais":"Estados Unidos"},{"year":2000,"quantity":894371.0,"pais":"Per\u00fa"},{"year":2000,"quantity":1922000.0,"pais":"Rusia"},{"year":2001,"quantity":6242200.0,"pais":"Chile"},{"year":2001,"quantity":1732100.0,"pais":"China"},{"year":2001,"quantity":2172700.0,"pais":"Estados Unidos"},{"year":2001,"quantity":1106947.0,"pais":"Per\u00fa"},{"year":2001,"quantity":2042500.0,"pais":"Rusia"},{"year":2002,"quantity":6019300.0,"pais":"Chile"},{"year":2002,"quantity":1758000.0,"pais":"China"},{"year":2002,"quantity":1825700.0,"pais":"Estados Unidos"},{"year":2002,"quantity":1223617.0,"pais":"Per\u00fa"},{"year":2002,"quantity":2177500.0,"pais":"Rusia"},{"year":2003,"quantity":6446600.0,"pais":"Chile"},{"year":2003,"quantity":1993600.0,"pais":"China"},{"year":2003,"quantity":1654700.0,"pais":"Estados Unidos"},{"year":2003,"quantity":1156806.0,"pais":"Per\u00fa"},{"year":2003,"quantity":2154000.0,"pais":"Rusia"},{"year":2004,"quantity":6930100.0,"pais":"Chile"},{"year":2004,"quantity":2257100.0,"pais":"China"},{"year":2004,"quantity":1702100.0,"pais":"Estados Unidos"},{"year":2004,"quantity":1355709.0,"pais":"Per\u00fa"},{"year":2004,"quantity":2210900.0,"pais":"Rusia"},{"year":2005,"quantity":6878600.0,"pais":"Chile"},{"year":2005,"quantity":2527500.0,"pais":"China"},{"year":2005,"quantity":1663000.0,"pais":"Estados Unidos"},{"year":2005,"quantity":1331866.0,"pais":"Per\u00fa"},{"year":2005,"quantity":2270400.0,"pais":"Rusia"},{"year":2006,"quantity":6926200.0,"pais":"Chile"},{"year":2006,"quantity":2806500.0,"pais":"China"},{"year":2006,"quantity":1698300.0,"pais":"Estados Unidos"},{"year":2006,"quantity":1370660.0,"pais":"Per\u00fa"},{"year":2006,"quantity":2261400.0,"pais":"Rusia"},{"year":2007,"quantity":7071300.0,"pais":"Chile"},{"year":2007,"quantity":3057700.0,"pais":"China"},{"year":2007,"quantity":1787000.0,"pais":"Estados Unidos"},{"year":2007,"quantity":1427083.0,"pais":"Per\u00fa"},{"year":2007,"quantity":2287600.0,"pais":"Rusia"},{"year":2008,"quantity":6696800.0,"pais":"Chile"},{"year":2008,"quantity":3546100.0,"pais":"China"},{"year":2008,"quantity":1883800.0,"pais":"Estados Unidos"},{"year":2008,"quantity":1574450.0,"pais":"Per\u00fa"},{"year":2008,"quantity":2198600.0,"pais":"Rusia"},{"year":2009,"quantity":6916700.0,"pais":"Chile"},{"year":2009,"quantity":3755900.0,"pais":"China"},{"year":2009,"quantity":1777200.0,"pais":"Estados Unidos"},{"year":2009,"quantity":1602037.0,"pais":"Per\u00fa"},{"year":2009,"quantity":2151400.0,"pais":"Rusia"},{"year":2010,"quantity":6978700.0,"pais":"Chile"},{"year":2010,"quantity":3981400.0,"pais":"China"},{"year":2010,"quantity":1711200.0,"pais":"Estados Unidos"},{"year":2010,"quantity":1560152.0,"pais":"Per\u00fa"},{"year":2010,"quantity":2249400.0,"pais":"Rusia"},{"year":2011,"quantity":6785100.0,"pais":"Chile"},{"year":2011,"quantity":4331400.0,"pais":"China"},{"year":2011,"quantity":1651300.0,"pais":"Estados Unidos"},{"year":2011,"quantity":1534349.0,"pais":"Per\u00fa"},{"year":2011,"quantity":2164500.0,"pais":"Rusia"},{"year":2012,"quantity":6776300.0,"pais":"Chile"},{"year":2012,"quantity":5178200.0,"pais":"China"},{"year":2012,"quantity":1652100.0,"pais":"Estados Unidos"},{"year":2012,"quantity":1588849.0,"pais":"Per\u00fa"},{"year":2012,"quantity":2116300.0,"pais":"Rusia"},{"year":2013,"quantity":7134300.0,"pais":"Chile"},{"year":2013,"quantity":5944069.0,"pais":"China"},{"year":2013,"quantity":1794700.0,"pais":"Estados Unidos"},{"year":2013,"quantity":1788607.0,"pais":"Per\u00fa"},{"year":2013,"quantity":2179500.0,"pais":"Rusia"},{"year":2014,"quantity":7123500.0,"pais":"Chile"},{"year":2014,"quantity":6944694.0,"pais":"China"},{"year":2014,"quantity":1906700.0,"pais":"Estados Unidos"},{"year":2014,"quantity":1692257.0,"pais":"Per\u00fa"},{"year":2014,"quantity":2244800.0,"pais":"Rusia"},{"year":2015,"quantity":7154100.0,"pais":"Chile"},{"year":2015,"quantity":7216882.0,"pais":"China"},{"year":2015,"quantity":1907000.0,"pais":"Estados Unidos"},{"year":2015,"quantity":2028726.0,"pais":"Per\u00fa"},{"year":2015,"quantity":2246700.0,"pais":"Rusia"},{"year":2016,"quantity":5552600.0,"pais":"Chile"},{"year":2016,"quantity":8015223.0,"pais":"China"},{"year":2016,"quantity":1430000.0,"pais":"Estados Unidos"},{"year":2016,"quantity":2353859.0,"pais":"Per\u00fa"},{"year":2016,"quantity":2227400.0,"pais":"Rusia"},{"year":2017,"quantity":5503500.0,"pais":"Chile"},{"year":2017,"quantity":8130600.0,"pais":"China"},{"year":2017,"quantity":1260000.0,"pais":"Estados Unidos"},{"year":2017,"quantity":2445585.0,"pais":"Per\u00fa"},{"year":2017,"quantity":2440100.0,"pais":"Rusia"},{"year":2018,"quantity":5831600.0,"pais":"Chile"},{"year":2018,"quantity":1615234.0,"pais":"China"},{"year":2018,"quantity":1220000.0,"pais":"Estados Unidos"},{"year":2018,"quantity":2437035.0,"pais":"Per\u00fa"},{"year":2018,"quantity":2675500.0,"pais":"Rusia"},{"year":2019,"quantity":5787400.0,"pais":"Chile"},{"year":2019,"quantity":1683700.0,"pais":"China"},{"year":2019,"quantity":1260000.0,"pais":"Estados Unidos"},{"year":2019,"quantity":2437925.0,"pais":"Per\u00fa"},{"year":2019,"quantity":2630900.0,"pais":"Rusia"},{"year":2020,"quantity":5733100.0,"pais":"Chile"},{"year":2020,"quantity":1723100.0,"pais":"China"},{"year":2020,"quantity":1200000.0,"pais":"Estados Unidos"},{"year":2020,"quantity":2153952.0,"pais":"Per\u00fa"},{"year":2020,"quantity":2794300.0,"pais":"Rusia"},{"year":2021,"quantity":5624900.0,"pais":"Chile"},{"year":2021,"quantity":1818000.0,"pais":"China"},{"year":2021,"quantity":1230000.0,"pais":"Estados Unidos"},{"year":2021,"quantity":2329886.0,"pais":"Per\u00fa"},{"year":2021,"quantity":2951800.0,"pais":"Rusia"},{"year":2022,"quantity":5330500.0,"pais":"Chile"},{"year":2022,"quantity":1899200.0,"pais":"China"},{"year":2022,"quantity":1230000.0,"pais":"Estados Unidos"},{"year":2022,"quantity":2445271.0,"pais":"Per\u00fa"},{"year":2022,"quantity":2887600.0,"pais":"Rusia"},{"year":2023,"quantity":5372694.0,"pais":"Chile"},{"year":2023,"quantity":1815010.0,"pais":"China"},{"year":2023,"quantity":1100000.0,"pais":"Estados Unidos"},{"year":2023,"quantity":2755244.0,"pais":"Per\u00fa"},{"year":2023,"quantity":2872300.0,"pais":"Rusia"}];
+        
+        // ==========================================
+        // GRÁFICO 1: CHILE
+        // ==========================================
+        
+        const traceChile = {
+            x: chileData.map(d => d.year),
+            y: chileData.map(d => d.quantity / 1000),
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Chile',
+            line: {color: '#D32F2F', width: 3},
+            marker: {size: 8},
+            fill: 'tonexty',
+            fillcolor: 'rgba(211, 47, 47, 0.2)',
+            hovertemplate: '<b>Año:</b> %{x}<br><b>Producción:</b> %{y:.0f} mil ton<extra></extra>'
+        };
+        
+        const layoutChile = {
+            xaxis: {
+                title: 'Año',
+                rangeslider: {visible: true}
+            },
+            yaxis: {
+                title: 'Producción (miles de toneladas)'
+            },
+            hovermode: 'x unified',
+            height: 500
+        };
+        
+        Plotly.newPlot('chart-chile', [traceChile], layoutChile, {responsive: true});
+        
+        // ==========================================
+        // GRÁFICO 2: COMPARACIÓN
+        // ==========================================
+        
+        // Agrupar datos por país
+        const countries = [...new Set(allCountriesData.map(d => d.pais))];
+        const tracesComparison = countries.map(country => {
+            const countryData = allCountriesData.filter(d => d.pais === country);
+            return {
+                x: countryData.map(d => d.year),
+                y: countryData.map(d => d.quantity / 1000),
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: country,
+                line: {width: 3},
+                marker: {size: 6},
+                hovertemplate: '<b>' + country + '</b><br>Año: %{x}<br>Producción: %{y:.0f} mil ton<extra></extra>'
+            };
+        });
+        
+        const layoutComparison = {
+            xaxis: {
+                title: 'Año',
+                rangeslider: {visible: true}
+            },
+            yaxis: {
+                title: 'Producción (miles de toneladas)'
+            },
+            hovermode: 'x unified',
+            height: 600,
+            legend: {
+                orientation: 'h',
+                y: 1.1
+            }
+        };
+        
+        Plotly.newPlot('chart-comparison', tracesComparison, layoutComparison, {responsive: true});
+        
+        // ==========================================
+        // FUNCIONES DE DESCARGA
+        // ==========================================
+        
+        function downloadImageChile() {
+            Plotly.downloadImage('chart-chile', {
+                format: 'png',
+                width: 1400,
+                height: 800,
+                filename: 'chile_copper_production'
+            });
+        }
+        
+        function downloadImageComparison() {
+            Plotly.downloadImage('chart-comparison', {
+                format: 'png',
+                width: 1400,
+                height: 900,
+                filename: 'copper_countries_comparison'
+            });
+        }
+        
+        function downloadCSVChile() {
+            let csv = 'Año,Producción (toneladas),País\n';
+            chileData.forEach(row => {
+                csv += `${row.year},${row.quantity},${row.pais}\n`;
+            });
+            downloadFile(csv, 'chile_copper_data.csv', 'text/csv');
+        }
+        
+        function downloadCSVAll() {
+            let csv = 'Año,Producción (toneladas),País\n';
+            allCountriesData.forEach(row => {
+                csv += `${row.year},${row.quantity},${row.pais}\n`;
+            });
+            downloadFile(csv, 'top5_countries_copper_data.csv', 'text/csv');
+        }
+        
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], {type: type});
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function resetZoomChile() {
+            Plotly.relayout('chart-chile', {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true
+            });
+        }
+        
+        function resetZoomComparison() {
+            Plotly.relayout('chart-comparison', {
+                'xaxis.autorange': true,
+                'yaxis.autorange': true
+            });
+        }
+    </script>
+</body>
+</html>
