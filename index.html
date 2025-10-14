@@ -1,225 +1,258 @@
-Index simplificado comentado · HTML
-Descargar
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análisis de Minería - Mi Página</title>
+    <title>Producción de Cobre en Chile</title>
     
-    <!-- ========================================================================
-         PASO 1: CARGAR PLOTLY.JS (necesario para mostrar gráficos JSON)
-         ======================================================================== -->
+    <!-- Cargar Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             padding: 20px;
-            background-color: #f5f5f5;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1600px;
             margin: 0 auto;
         }
         
-        h1 {
-            color: #333;
+        header {
             text-align: center;
-        }
-        
-        .chart-section {
-            background: white;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        iframe {
-            width: 100%;
-            height: 600px;
-            border: none;
-        }
-        
-        /* Estilo para gráficos Plotly desde JSON */
-        .plotly-chart {
-            width: 100%;
-            height: 600px;
-        }
-        
-        .button-group {
-            text-align: center;
-            margin: 20px 0;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            margin: 5px;
-            background-color: #D32F2F;
             color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            margin-bottom: 30px;
         }
         
-        .btn:hover {
-            background-color: #B71C1C;
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .chart-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-header h2 {
+            color: #333;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        
+        .chart-header p {
+            color: #666;
+            font-size: 1em;
+        }
+        
+        #plotly-chart {
+            width: 100%;
+            height: 700px;
+            margin-bottom: 20px;
         }
         
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 100px 20px;
             color: #666;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .button-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .chart-container {
+                padding: 15px;
+            }
+            
+            #plotly-chart {
+                height: 500px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📊 Análisis de Producción de Cobre</h1>
+        <!-- Header -->
+        <header>
+            <h1>📊 Análisis de Producción de Cobre</h1>
+            <p>Datos oficiales de Cochilco (2003-2025)</p>
+        </header>
         
-        <!-- ====================================================================
-             NUEVA SECCIÓN: Gráfico desde GitHub JSON
-             ==================================================================== -->
-        <div class="chart-section">
-            <h2>📈 Producción de Cobre en Chile (2003-2025)</h2>
-            <p style="text-align: center; color: #666;">
-                Gráfico interactivo con scatter, media móvil e intervalo de confianza 95%
-            </p>
-            
-            <!-- PASO 2: Contenedor donde se mostrará el gráfico -->
-            <div id="production_chile_03-25" class="plotly-chart">
-                <div class="loading">⏳ Cargando gráfico desde GitHub...</div>
+        <!-- Contenedor del gráfico -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h2>🇨🇱 Producción Total de Cobre en Chile</h2>
+                <p>Con media móvil de 12 meses e intervalo de confianza del 95%</p>
             </div>
             
+            <!-- Aquí se mostrará el gráfico -->
+            <div id="plotly-chart">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Cargando gráfico desde GitHub...</p>
+                </div>
+            </div>
+            
+            <!-- Botones de descarga -->
             <div class="button-group">
-                <!-- Actualiza esta URL con la tuya -->
-                <a href="https://raw.githubusercontent.com/alonsoquezadar/mineral-analysis.github.io/refs/heads/main/Cochilco%20Data%20Analysis.json" 
+                <a href="https://raw.githubusercontent.com/alonsoquezadar/mineral-analysis.github.io/refs/heads/main/production_chile_03-25.json" 
                    download class="btn">
-                    💾 Descargar JSON desde GitHub
+                    💾 Descargar JSON
                 </a>
-                <a href="Cochilco_Data_Production_per_Company.csv" download class="btn">
-                    📊 Descargar Datos CSV
-                </a>
-            </div>
-        </div>
-        
-        <!-- ====================================================================
-             SECCIONES EXISTENTES
-             ==================================================================== -->
-        
-        <!-- Sección: Gráfico de Chile -->
-        <div class="chart-section">
-            <h2>🇨🇱 Producción de Cobre en Chile</h2>
-            <iframe src="Gráfico Chile Cobre - Mining Statistics.html"></iframe>
-            <div class="button-group">
-                <a href="Datos Chile Cobre.csv" download class="btn">
-                    💾 Descargar Datos Chile (CSV)
+                <a href="https://github.com/alonsoquezadar/mineral-analysis.github.io" 
+                   target="_blank" class="btn">
+                    🔗 Ver en GitHub
                 </a>
             </div>
         </div>
         
-        <!-- Sección: Comparación de Países -->
-        <div class="chart-section">
-            <h2>🌍 Comparación Internacional</h2>
-            <iframe src="Comparación de Países.html"></iframe>
-            <div class="button-group">
-                <a href="Top 5 Países Cobre.csv" download class="btn">
-                    💾 Descargar Datos Todos los Países (CSV)
-                </a>
-            </div>
-        </div>
-        
-        <!-- Link a dashboard completo -->
-        <div class="button-group">
-            <a href="pagina_completa_mineria.html" class="btn">
-                🚀 Ver Dashboard Completo
-            </a>
-        </div>
+        <!-- Footer -->
+        <footer>
+            <p>Fuente: Comisión Chilena del Cobre (Cochilco)</p>
+            <p>Última actualización: Octubre 2025</p>
+        </footer>
     </div>
 
-    <!-- ========================================================================
-         PASO 3: SCRIPT PARA CARGAR EL JSON DESDE GITHUB
-         ======================================================================== -->
+    <!-- Script para cargar el gráfico -->
     <script>
-        // ====================================================================
-        // CONFIGURACIÓN: Actualiza esta URL con la ruta a tu JSON en GitHub
-        // ====================================================================
+        // URL del JSON en GitHub
+        const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/alonsoquezadar/mineral-analysis.github.io/refs/heads/main/production_chile_03-25.json';
         
-        // IMPORTANTE: Usa la URL "raw" de GitHub
-        // Ejemplo: https://raw.githubusercontent.com/usuario/repo/main/archivo.json
-        const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/alonsoquezadar/mineral-analysis.github.io/refs/heads/main/Cochilco%20Data%20Analysis.json';
-        
-        // ALTERNATIVA: Si el JSON está en la misma carpeta que el HTML
-        // const GITHUB_JSON_URL = './production_chile_03-25.json';
-        
-        // ====================================================================
-        // FUNCIÓN PARA CARGAR Y MOSTRAR EL GRÁFICO
-        // ====================================================================
-        
+        /**
+         * Función para cargar y renderizar el gráfico desde GitHub
+         */
         async function cargarGraficoDesdeGithub() {
             try {
-                console.log('Cargando gráfico desde:', GITHUB_JSON_URL);
+                console.log('📊 Cargando gráfico desde GitHub...');
+                console.log('URL:', GITHUB_JSON_URL);
                 
-                // 1. Descargar el JSON desde GitHub
+                // Descargar el JSON
                 const response = await fetch(GITHUB_JSON_URL);
                 
-                // 2. Verificar que se descargó correctamente
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`Error HTTP: ${response.status}`);
                 }
                 
-                // 3. Convertir la respuesta a JSON
-                const graficoJSON = await response.json();
+                // Convertir a JSON
+                const graficoData = await response.json();
                 
-                // 4. Renderizar el gráfico con Plotly
+                console.log('✓ JSON cargado exitosamente');
+                console.log('Datos:', graficoData);
+                
+                // Renderizar el gráfico con Plotly
                 Plotly.newPlot(
-                    'production_chile_03-25',  // ID del div contenedor
-                    graficoJSON.data,       // Datos del gráfico
-                    graficoJSON.layout,     // Layout/diseño del gráfico
+                    'plotly-chart',           // ID del div
+                    graficoData.data,         // Datos del gráfico
+                    graficoData.layout,       // Layout del gráfico
                     {
-                        responsive: true,              // Se adapta al tamaño
-                        displayModeBar: true,          // Muestra barra de herramientas
-                        displaylogo: false,            // Oculta logo de Plotly
+                        responsive: true,              // Responsive
+                        displayModeBar: true,          // Mostrar barra de herramientas
+                        displaylogo: false,            // Ocultar logo Plotly
                         modeBarButtonsToRemove: [      // Ocultar botones innecesarios
-                            'lasso2d', 
+                            'lasso2d',
                             'select2d'
                         ]
                     }
                 );
                 
-                console.log('✓ Gráfico cargado exitosamente');
+                console.log('✓ Gráfico renderizado exitosamente');
                 
             } catch (error) {
                 console.error('❌ Error al cargar el gráfico:', error);
                 
-                // Mostrar mensaje de error en la página
-                document.getElementById('production_chile_03-25').innerHTML = `
+                // Mostrar mensaje de error
+                document.getElementById('plotly-chart').innerHTML = `
                     <div class="loading" style="color: #D32F2F;">
-                        ❌ Error al cargar el gráfico desde GitHub<br>
-                        <small>
-                            Verifica que la URL del JSON sea correcta.<br>
-                            Abre la consola (F12) para más detalles.
-                        </small>
+                        <h3>❌ Error al cargar el gráfico</h3>
+                        <p>No se pudo cargar el gráfico desde GitHub.</p>
+                        <p><small>Error: ${error.message}</small></p>
+                        <p style="margin-top: 20px;">
+                            <strong>Posibles soluciones:</strong><br>
+                            • Verifica que la URL del JSON sea correcta<br>
+                            • Abre la consola (F12) para más detalles<br>
+                            • Intenta recargar la página<br>
+                        </p>
                     </div>
                 `;
             }
         }
         
-        // ====================================================================
-        // EJECUTAR LA CARGA CUANDO LA PÁGINA ESTÉ LISTA
-        // ====================================================================
-        
+        // Cargar el gráfico cuando la página esté lista
         window.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Página cargada, iniciando descarga del gráfico...');
             cargarGraficoDesdeGithub();
         });
-        
-        // OPCIONAL: Recargar el gráfico cada 5 minutos (si actualizas el JSON)
-        // setInterval(cargarGraficoDesdeGithub, 5 * 60 * 1000);
         
     </script>
 </body>
