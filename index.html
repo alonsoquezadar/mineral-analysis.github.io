@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe: Producción de Cobre en Chile</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 80px;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        header .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            font-style: italic;
+        }
+        
+        header .meta {
+            margin-top: 20px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .content {
+            padding: 60px 80px;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section h2 {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            font-weight: 400;
+        }
+        
+        .section h3 {
+            font-size: 1.3em;
+            color: #34495e;
+            margin: 25px 0 15px 0;
+            font-weight: 500;
+        }
+        
+        .section p {
+            font-family: 'Arial', sans-serif;
+            font-size: 1.05em;
+            margin-bottom: 15px;
+            text-align: justify;
+            color: #555;
+        }
+        
+        .section ul, .section ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .section li {
+            font-family: 'Arial', sans-serif;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        #plotly-chart {
+            width: 100%;
+            height: 700px;
+            margin: 30px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+            color: #999;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .highlight-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 5px;
+        }
+        
+        .highlight-box p {
+            margin: 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .stat-card .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .label {
+            font-size: 0.9em;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px 80px;
+            font-size: 0.9em;
+        }
+        
+        footer p {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            header, .content, footer {
+                padding: 30px 20px;
+            }
+            
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .section h2 {
+                font-size: 1.5em;
+            }
+            
+            #plotly-chart {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header del informe -->
+        <header>
+            <h1>Informe de Producción de Cobre en Chile</h1>
+            <p class="subtitle">Análisis Histórico 2003-2025</p>
+            <div class="meta">
+                <p>📅 Período de análisis: Enero 2003 - Agosto 2025</p>
+                <p>📊 Fuente: Comisión Chilena del Cobre (Cochilco)</p>
+            </div>
+        </header>
+        
+        <!-- Contenido del informe -->
+        <div class="content">
+            
+            <!-- Sección 1: Resumen Ejecutivo -->
+            <section class="section">
+                <h2>1. Resumen Ejecutivo</h2>
+                
+                <p>Este informe presenta un análisis detallado de la producción de cobre en Chile durante el período 2003-2025, basado en datos oficiales de la Comisión Chilena del Cobre (Cochilco). El análisis incluye tendencias históricas, patrones estacionales y proyecciones estadísticas mediante el uso de medias móviles e intervalos de confianza.</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="number">272</div>
+                        <div class="label">Meses Analizados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">22+</div>
+                        <div class="label">Años de Datos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">~457</div>
+                        <div class="label">Promedio Mensual (mil TM)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">7.9%</div>
+                        <div class="label">Coeficiente de Variación</div>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <p><strong>Hallazgo clave:</strong> La producción de cobre en Chile muestra una tendencia de crecimiento moderado con volatilidad controlada, alcanzando su máximo histórico de 563.5 mil toneladas en diciembre de 2024.</p>
+                </div>
+            </section>
+            
+            <!-- Sección 2: Metodología -->
+            <section class="section">
+                <h2>2. Metodología</h2>
+                
+                <p>El análisis utiliza técnicas estadísticas avanzadas para evaluar la producción nacional de cobre fino. Las principales métricas empleadas incluyen:</p>
+                
+                <h3>2.1. Media Móvil de 12 Meses</h3>
+                <p>La media móvil permite suavizar las fluctuaciones mensuales y revelar la tendencia subyacente de la producción. Se calcula utilizando una ventana deslizante de 12 meses, lo que proporciona una visión más clara de los cambios estructurales en la industria.</p>
+                
+                <h3>2.2. Intervalo de Confianza del 95%</h3>
+                <p>El intervalo de confianza estadístico, calculado con ±1.96 desviaciones estándar, indica el rango dentro del cual se espera que caiga el 95% de las observaciones futuras, basándose en la variabilidad histórica. Esto permite identificar eventos atípicos y evaluar la estabilidad de la producción.</p>
+            </section>
+            
+            <!-- Sección 3: Análisis de Producción -->
+            <section class="section">
+                <h2>3. Análisis de Producción Histórica</h2>
+                
+                <p>La siguiente visualización interactiva presenta la evolución de la producción mensual de cobre en Chile. Los puntos azules representan los datos mensuales individuales, mientras que la línea púrpura muestra la tendencia suavizada mediante la media móvil de 12 meses. La banda sombreada indica el intervalo de confianza del 95%.</p>
+                
+                <!-- Gráfico interactivo -->
+                <div id="plotly-chart">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Cargando gráfico desde GitHub...</p>
+                    </div>
+                </div>
+                
+                <h3>3.1. Observaciones Principales</h3>
+                <p>El análisis gráfico revela varios patrones importantes:</p>
+                <ul>
+                    <li><strong>Máximo histórico:</strong> Se registró en diciembre de 2024 con 563.5 mil toneladas métricas de cobre fino, marcando el punto más alto de producción en el período analizado.</li>
+                    <li><strong>Mínimo histórico:</strong> Ocurrió en febrero de 2005 con 367.0 mil toneladas, durante un período de ajuste en la industria.</li>
+                    <li><strong>Tendencia general:</strong> La producción muestra un crecimiento moderado sostenido a lo largo del período, con fluctuaciones controladas dentro del intervalo de confianza.</li>
+                    <li><strong>Volatilidad:</strong> El coeficiente de variación del 7.9% indica una producción relativamente estable, con desviaciones predecibles respecto a la tendencia.</li>
+                </ul>
+                
+                <h3>3.2. Patrones Estacionales</h3>
+                <p>Si bien el gráfico muestra cierta variabilidad intra-anual, la mayor parte de las observaciones se mantiene dentro del intervalo de confianza, lo que sugiere que las fluctuaciones estacionales son moderadas y predecibles en el contexto de la producción nacional.</p>
+            </section>
+            
+            <!-- Sección 4: Conclusiones -->
+            <section class="section">
+                <h2>4. Conclusiones</h2>
+                
+                <p>El análisis de 22 años de datos de producción de cobre en Chile permite extraer las siguientes conclusiones:</p>
+                
+                <ol style="margin-left: 30px;">
+                    <li style="margin-bottom: 15px;"><strong>Estabilidad productiva:</strong> La industria del cobre chilena demuestra una notable estabilidad, con la mayoría de las observaciones manteniéndose dentro del intervalo de confianza estadístico.</li>
+                    
+                    <li style="margin-bottom: 15px;"><strong>Crecimiento sostenido:</strong> La tendencia de largo plazo muestra un crecimiento moderado pero consistente en la capacidad productiva nacional.</li>
+                    
+                    <li style="margin-bottom: 15px;"><strong>Resiliencia sectorial:</strong> A pesar de eventos económicos globales adversos, el sector ha mantenido niveles de producción relativamente estables.</li>
+                    
+                    <li style="margin-bottom: 15px;"><strong>Récord reciente:</strong> El máximo histórico alcanzado en 2024 refleja las inversiones en tecnología y eficiencia operacional de los últimos años.</li>
+                </ol>
+                
+                <div class="highlight-box">
+                    <p><strong>Recomendación:</strong> La estabilidad demostrada y el récord reciente de producción posicionan favorablemente a Chile como líder mundial en la producción de cobre. Se recomienda continuar el monitoreo de la tendencia y la variabilidad para detectar tempranamente cualquier desviación significativa del patrón histórico.</p>
+                </div>
+            </section>
+            
+            <!-- Sección 5: Notas Técnicas -->
+            <section class="section">
+                <h2>5. Notas Técnicas</h2>
+                
+                <h3>5.1. Fuente de Datos</h3>
+                <p>Comisión Chilena del Cobre (Cochilco) - Producción mensual por compañía minera, agregada a nivel nacional.</p>
+                
+                <h3>5.2. Unidades</h3>
+                <p>Todas las cifras están expresadas en miles de toneladas métricas de cobre fino.</p>
+                
+                <h3>5.3. Cálculos Estadísticos</h3>
+                <p>La media móvil se calcula utilizando una ventana deslizante de 12 meses con min_periods=1 para asegurar cobertura completa desde el inicio del período. El intervalo de confianza utiliza el método estándar de ±1.96 desviaciones estándar para el nivel del 95%.</p>
+            </section>
+            
+        </div>
+        
+        <!-- Footer -->
+        <footer>
+            <p><strong>Informe de Análisis Minero</strong></p>
+            <p>Comisión Chilena del Cobre (Cochilco) | Octubre 2025</p>
+            <p style="margin-top: 10px; font-size: 0.85em;">
+                Gráfico interactivo generado con Plotly | 
+                <a href="https://github.com/alonsoquezadar/mineral-analysis.github.io" 
+                   style="color: #667eea;" target="_blank">Ver repositorio en GitHub</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/alonsoquezadar/mineral-analysis.github.io/refs/heads/main/production_chile_03-25.json';
+        
+        async function cargarGrafico() {
+            try {
+                const response = await fetch(GITHUB_JSON_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                
+                // Hacer el layout responsive
+                const responsiveLayout = {
+                    ...data.layout,
+                    autosize: true,
+                    width: null,
+                    height: null
+                };
+                
+                Plotly.newPlot('plotly-chart', data.data, responsiveLayout, {
+                    responsive: true,
+                    displayModeBar: true,
+                    displaylogo: false,
+                    modeBarButtonsToRemove: ['lasso2d', 'select2d']
+                });
+                
+                console.log('✓ Gráfico cargado exitosamente');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('plotly-chart').innerHTML = `
+                    <div class="loading" style="color: #D32F2F;">
+                        <h3>❌ Error al cargar el gráfico</h3>
+                        <p>No se pudo cargar desde GitHub. Verifica tu conexión.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        window.addEventListener('DOMContentLoaded', cargarGrafico);
+    </script>
+</body>
+</html>
