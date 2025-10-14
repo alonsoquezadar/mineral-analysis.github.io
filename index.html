@@ -1,9 +1,18 @@
+Index simplificado comentado · HTML
+Descargar
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Análisis de Minería - Mi Página</title>
+    
+    <!-- ========================================================================
+         PASO 1: CARGAR PLOTLY.JS (necesario para mostrar gráficos JSON)
+         ======================================================================== -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,6 +45,12 @@
             border: none;
         }
         
+        /* Estilo para gráficos Plotly desde JSON */
+        .plotly-chart {
+            width: 100%;
+            height: 600px;
+        }
+        
         .button-group {
             text-align: center;
             margin: 20px 0;
@@ -55,16 +70,52 @@
         .btn:hover {
             background-color: #B71C1C;
         }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📊 Análisis de Producción de Cobre</h1>
         
+        <!-- ====================================================================
+             NUEVA SECCIÓN: Gráfico desde GitHub JSON
+             ==================================================================== -->
+        <div class="chart-section">
+            <h2>📈 Producción de Cobre en Chile (2003-2025)</h2>
+            <p style="text-align: center; color: #666;">
+                Gráfico interactivo con scatter, media móvil e intervalo de confianza 95%
+            </p>
+            
+            <!-- PASO 2: Contenedor donde se mostrará el gráfico -->
+            <div id="production_chile_03-25" class="plotly-chart">
+                <div class="loading">⏳ Cargando gráfico desde GitHub...</div>
+            </div>
+            
+            <div class="button-group">
+                <!-- Actualiza esta URL con la tuya -->
+                <a href="https://raw.githubusercontent.com/alonsoquezadar/mineral-analysis.github.io/refs/heads/main/Cochilco%20Data%20Analysis.json" 
+                   download class="btn">
+                    💾 Descargar JSON desde GitHub
+                </a>
+                <a href="Cochilco_Data_Production_per_Company.csv" download class="btn">
+                    📊 Descargar Datos CSV
+                </a>
+            </div>
+        </div>
+        
+        <!-- ====================================================================
+             SECCIONES EXISTENTES
+             ==================================================================== -->
+        
         <!-- Sección: Gráfico de Chile -->
         <div class="chart-section">
             <h2>🇨🇱 Producción de Cobre en Chile</h2>
-            <iframe src="Gráfico Chile Cobre - Mining Statistics.html"></iframe>
+            <iframe src="Gráfico Chile Cobre - Mining Statistics.html"></iframe>
             <div class="button-group">
                 <a href="Datos Chile Cobre.csv" download class="btn">
                     💾 Descargar Datos Chile (CSV)
@@ -75,20 +126,101 @@
         <!-- Sección: Comparación de Países -->
         <div class="chart-section">
             <h2>🌍 Comparación Internacional</h2>
-            <iframe src="Comparación de Países.html"></iframe>
+            <iframe src="Comparación de Países.html"></iframe>
             <div class="button-group">
-                <a href="Top 5 Países Cobre.csv" download class="btn">
+                <a href="Top 5 Países Cobre.csv" download class="btn">
                     💾 Descargar Datos Todos los Países (CSV)
                 </a>
             </div>
         </div>
         
-        <!-- Opcional: Link a la página completa -->
+        <!-- Link a dashboard completo -->
         <div class="button-group">
             <a href="pagina_completa_mineria.html" class="btn">
                 🚀 Ver Dashboard Completo
             </a>
         </div>
     </div>
+
+    <!-- ========================================================================
+         PASO 3: SCRIPT PARA CARGAR EL JSON DESDE GITHUB
+         ======================================================================== -->
+    <script>
+        // ====================================================================
+        // CONFIGURACIÓN: Actualiza esta URL con la ruta a tu JSON en GitHub
+        // ====================================================================
+        
+        // IMPORTANTE: Usa la URL "raw" de GitHub
+        // Ejemplo: https://raw.githubusercontent.com/usuario/repo/main/archivo.json
+        const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/production_chile_03-25.json';
+        
+        // ALTERNATIVA: Si el JSON está en la misma carpeta que el HTML
+        // const GITHUB_JSON_URL = './production_chile_03-25.json';
+        
+        // ====================================================================
+        // FUNCIÓN PARA CARGAR Y MOSTRAR EL GRÁFICO
+        // ====================================================================
+        
+        async function cargarGraficoDesdeGithub() {
+            try {
+                console.log('Cargando gráfico desde:', GITHUB_JSON_URL);
+                
+                // 1. Descargar el JSON desde GitHub
+                const response = await fetch(GITHUB_JSON_URL);
+                
+                // 2. Verificar que se descargó correctamente
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // 3. Convertir la respuesta a JSON
+                const graficoJSON = await response.json();
+                
+                // 4. Renderizar el gráfico con Plotly
+                Plotly.newPlot(
+                    'production_chile_03-25',  // ID del div contenedor
+                    graficoJSON.data,       // Datos del gráfico
+                    graficoJSON.layout,     // Layout/diseño del gráfico
+                    {
+                        responsive: true,              // Se adapta al tamaño
+                        displayModeBar: true,          // Muestra barra de herramientas
+                        displaylogo: false,            // Oculta logo de Plotly
+                        modeBarButtonsToRemove: [      // Ocultar botones innecesarios
+                            'lasso2d', 
+                            'select2d'
+                        ]
+                    }
+                );
+                
+                console.log('✓ Gráfico cargado exitosamente');
+                
+            } catch (error) {
+                console.error('❌ Error al cargar el gráfico:', error);
+                
+                // Mostrar mensaje de error en la página
+                document.getElementById('production_chile_03-25').innerHTML = `
+                    <div class="loading" style="color: #D32F2F;">
+                        ❌ Error al cargar el gráfico desde GitHub<br>
+                        <small>
+                            Verifica que la URL del JSON sea correcta.<br>
+                            Abre la consola (F12) para más detalles.
+                        </small>
+                    </div>
+                `;
+            }
+        }
+        
+        // ====================================================================
+        // EJECUTAR LA CARGA CUANDO LA PÁGINA ESTÉ LISTA
+        // ====================================================================
+        
+        window.addEventListener('DOMContentLoaded', function() {
+            cargarGraficoDesdeGithub();
+        });
+        
+        // OPCIONAL: Recargar el gráfico cada 5 minutos (si actualizas el JSON)
+        // setInterval(cargarGraficoDesdeGithub, 5 * 60 * 1000);
+        
+    </script>
 </body>
 </html>
